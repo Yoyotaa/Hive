@@ -1,0 +1,35 @@
+version: '3'
+services:
+  login:
+    build: ./services/login
+    image: login-image:latest
+    container_name: login-container
+    ports:
+      - "3001:3001"
+    networks:
+      - hive-network
+  payment:
+    build: ./services/payment
+    image: payment-image:latest
+    container_name: payment-container
+    ports:
+      - "3002:3002"
+    networks:
+      - hive-network
+
+  api-gateway:
+    build: ./api-gateway
+    image: api-gateway-nginx:latest
+    container_name: api-gateway-container
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - login
+      - payment
+    networks:
+      - hive-network
+
+networks:
+  hive-network:
+    driver: bridge
